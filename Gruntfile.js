@@ -10,19 +10,10 @@ module.exports = function(grunt) {
 		aws: ( grunt.file.exists(homedir('.grunt-aws.json')) ? JSON.parse(base64.decode(grunt.file.read(homedir('.grunt-aws.json')))) : ''),
 
 		dirs: {
-			dev		: 'project/development/',
-			dest	: 'project/production/',
-			pack    : 'project/pack/',
+			dev		: './',
+			prod	: './',
+			pack  : 'project/pack/',
 			temp	: '.temp/',
-		},
-
-		/*
-			Clean files and folders.
-			https://www.npmjs.org/package/grunt-contrib-clean
-		*/
-		clean: {
-			development: [ '<%= dirs.temp %>' ],
-			production:  [ '<%= dirs.dest %>' ]
 		},
 
 		/*
@@ -52,7 +43,7 @@ module.exports = function(grunt) {
 		gitpull: {
 			production: {
 				files: {
-					src: ['/**/*.*'],
+					src: ['<%= dirs.prod %>**/*.*'],
 				}
 			}
 		},
@@ -65,7 +56,7 @@ module.exports = function(grunt) {
 			production: {
 				options: { },
 				files: {
-					src: ['*.*','project/'],
+					src: ['*.*'],
 				}
 			}
 		},
@@ -106,9 +97,9 @@ module.exports = function(grunt) {
 
 				// Files to be uploaded.
 				upload: [{
-					src: 'project/production/**/*.*',
-					dest: '/static/',
-					rel: 'project/production'
+					src: '<%= dirs.prod %>**/*.*',
+					dest: '<%= dirs.prod %>',
+					rel: '<%= dirs.prod %>'
 				}],
 			},
 
@@ -122,42 +113,23 @@ module.exports = function(grunt) {
 
 				// Files to be synchronized.
 				sync: [{
-					src: 'project/production/**/*.*',
-					dest: '/static/',
-					rel: 'project/production'
+					src: '<%= dirs.prod %>**/*.*',
+					dest: '<%= dirs.prod %>',
+					rel: '<%= dirs.prod %>'
 				}],
 			}
 
 		  },
 
-
-		/*
-			Run predefined tasks whenever watched file patterns are added, changed or deleted.
-			https://www.npmjs.org/package/grunt-contrib-watch
-		*/
-		watchdev: {
-			sass: {
-				files: ['<%= dirs.dev %>styles/**/*.less'],
-				tasks: ['less:development'],
-				options: {
-					spawn: false,
-					livereload: true
-				}
-			},
-		},
-
-
 	});
 
 	// Load the plugins that provides the tasks.
 	grunt.loadNpmTasks('grunt-cloudfront');
-	grunt.loadNpmTasks('grunt-contrib-sass');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.renameTask  ('watch', 'watchdev');
 	grunt.loadNpmTasks('grunt-git');
 	grunt.loadNpmTasks('grunt-s3');
 
 
+ //grunt deploy:args:test
 	grunt.task.registerTask('deploy',
 							'Task to push latest changes in the repository and deploy in amazon s3 server',
 							function(args){
@@ -209,44 +181,44 @@ module.exports = function(grunt) {
 			}
 	);
 
-	grunt.task.registerTask('invalidate',
-			'Task to invalidate a file',
-			function(args) {
-				if (arguments.length === 0) {
-					grunt.log.writeln("no path provided.");
-				} else {
-					var aux = [];
-					for (var i=0; i<arguments.length; i++) {
-						grunt.log.writeln("path " + (i+1) + ":" + arguments[i]);
-						aux.push(arguments[i])
-					}
+	// grunt.task.registerTask('invalidate',
+	// 		'Task to invalidate a file',
+	// 		function(args) {
+	// 			if (arguments.length === 0) {
+	// 				grunt.log.writeln("no path provided.");
+	// 			} else {
+	// 				var aux = [];
+	// 				for (var i=0; i<arguments.length; i++) {
+	// 					grunt.log.writeln("path " + (i+1) + ":" + arguments[i]);
+	// 					aux.push(arguments[i])
+	// 				}
+  //
+	// 				grunt.config.set('cloudfront.production.paths', aux);
+	// 				grunt.task.run('cloudfront');
+	// 			}
+	// 		}
+	// );
 
-					grunt.config.set('cloudfront.production.paths', aux);
-					grunt.task.run('cloudfront');
-				}
-			}
-	);
-
-	grunt.task.registerTask('cert',
-			'Task to invalidate a file',
-			function(bucket,key,secret,distribution) {
-
-				if (arguments.length !== 4) {
-					grunt.log.writeln("Error: 4 arguments are required");
-					grunt.log.writeln("grunt cert:[bucket]:[key]:[secret]:[distribution]");
-				} else {
-					var cert = {};
-					cert.accessKeyId = key;
-					cert.secretAccessKey = secret;
-					cert.bucket = bucket;
-					cert.distributionId = distribution;
-
-					grunt.file.write(homedir('.grunt-aws.json'), base64.encode(JSON.stringify(cert)));
-					grunt.log.writeln(JSON.stringify(cert));
-					grunt.log.writeln("The certificate has been created on " + homedir('.grunt-aws.json'));
-
-				}
-			}
-	);
+	// grunt.task.registerTask('cert',
+	// 		'Task to invalidate a file',
+	// 		function(bucket,key,secret,distribution) {
+  //
+	// 			if (arguments.length !== 4) {
+	// 				grunt.log.writeln("Error: 4 arguments are required");
+	// 				grunt.log.writeln("grunt cert:[bucket]:[key]:[secret]:[distribution]");
+	// 			} else {
+	// 				var cert = {};
+	// 				cert.accessKeyId = key;
+	// 				cert.secretAccessKey = secret;
+	// 				cert.bucket = bucket;
+	// 				cert.distributionId = distribution;
+  //
+	// 				grunt.file.write(homedir('.grunt-aws.json'), base64.encode(JSON.stringify(cert)));
+	// 				grunt.log.writeln(JSON.stringify(cert));
+	// 				grunt.log.writeln("The certificate has been created on " + homedir('.grunt-aws.json'));
+  //
+	// 			}
+	// 		}
+	// );
 
 };
