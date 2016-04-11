@@ -146,6 +146,7 @@
 				@type {Function}
 			**/
 			callBackErrorFunction: null,
+      
 			/**
 				Call back when emptied event is fired
 				@property callBackEmptiedFunction

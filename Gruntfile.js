@@ -56,7 +56,7 @@ module.exports = function(grunt) {
 			production: {
 				options: { },
 				files: {
-					src: ['*.*'],
+					src: ['<%= dirs.prod %>**/*.*'],
 				}
 			}
 		},
@@ -129,7 +129,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-s3');
 
 
- //grunt deploy:args:test
+ //grunt deploy:test
 	grunt.task.registerTask('deploy',
 							'Task to push latest changes in the repository and deploy in amazon s3 server',
 							function(args){
@@ -139,9 +139,11 @@ module.exports = function(grunt) {
                   //grunt.task.run('production');
 									grunt.task.run('gitpull');
 									grunt.config.set('gitcommit.options.message', args);
+                  grunt.log.writeln('<%= dirs.prod %>');
 									grunt.task.run('gitcommit');
 									grunt.task.run('gitpush');
-									grunt.task.run('s3:production_sync');
+									// grunt.task.run('s3:production_sync');
+                  grunt.log.writeln('<%= dirs.prod %>');
 								}
 							}
 	);
