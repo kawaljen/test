@@ -164,7 +164,7 @@ module.exports = function(grunt) {
 								if (arguments.length === 0) {
 									grunt.log.writeln("no message provided.");
 								} else {
-                  grunt.task.run('production');
+                  //grunt.task.run('production');
 									grunt.task.run('gitpull');
 									grunt.config.set('gitcommit.options.message', args);
 									grunt.task.run('gitcommit');
