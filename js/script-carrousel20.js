@@ -170,7 +170,6 @@
      self.priv.currentIndex = 0;
      self.priv.openedSlide = [];
      self.priv.$slideNav = [];
-
      self.priv.slidesLength = self.priv.$carrouselSlides.length;
 
      __handleMatchMediaDesktop(self.priv.mqd);

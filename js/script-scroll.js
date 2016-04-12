@@ -1,7 +1,5 @@
 (function($) {
-
-  $.fn.unveil2 = function(threshold, callback) {
-
+  $.fn.isVisibleCheck = function(threshold, callback) {
     var $w = $(window),
         th = threshold || 1000,
         images = this,
@@ -9,12 +7,9 @@
         delay =0;
 
     this.one("unveil", function() {
-        //setTimeout(function(){
-          if (typeof callback === "function") {
-              callback.call(this);
-              delay = delay + 500;
-          }
-        //}.bind(callback),delay);
+        if (typeof callback === "function") {
+            callback.call(this);
+        }
     });
 
     function unveil() {
@@ -34,18 +29,19 @@
     }
 
     $w.on("scroll.unveil resize.unveil lookup.unveil", unveil);
-
     unveil();
-
     return this;
-
   };
-
 })(window.jQuery || window.Zepto);
 
 $(document).ready(function() {
-  $(".cp-module").unveil2(200, function() {
+  var delay = 0;
+  $(".cp-module").isVisibleCheck(200, function() {
+    setTimeout(function(){
       $(this).addClass('lazyloaded');
+      delay = 0;
+    }.bind($(this), delay), delay);
+    delay = 500;
   });
 
   $('.cp-image').hover(function(){ $(this).closest('.cp-module').toggleClass('hover');})

@@ -10,8 +10,8 @@ module.exports = function(grunt) {
 		aws: ( grunt.file.exists(homedir('.grunt-aws.json')) ? JSON.parse(base64.decode(grunt.file.read(homedir('.grunt-aws.json')))) : ''),
 
 		dirs: {
-			dev		: '',
-			prod	: '',
+			dev		: './',
+			prod	: './',
 			pack  : 'project/pack/',
 			temp	: '.temp/',
 		},
