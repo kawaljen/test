@@ -29,7 +29,6 @@
   				@property wrapper
   				@type {String or DOM Object}
   			**/
-    		//	wrapper: this.base.expandedRootElement,
         wrapper: 'product-media__gallery',
 
         /**
@@ -67,13 +66,11 @@
         slideNavCssClass : 'media-navigation__item',
 
         /**
-          url tip for the slide nav
-
-          @property wrapper
-          @type {String or DOM Object}
-        **/
-        //	wrapper: this.base.expandedRootElement,
-        slideNavTip: 'https://mangayio.assos.com/mediaresize/catalog/product/0/7/07_ss-rallytrek_evo7_lady_piton.jpg?width=1000',
+         slide Nav css class
+         @property slideNavCssClass
+         @type {String}
+         **/
+        slideNavTipWrap : 'media-navigation__list',
 
       	/**
   				Default value to show basic control in the carrousel
@@ -114,16 +111,34 @@
         /**
          carrousel images max size
          @property imgSize
-         @type {Number}
+         @type {String}
          **/
-        //imgSize : 0,
+        imgSize : '',
+        /**
+         Get optimised Images
+         @property responsiveImages
+         @type {Boolean}
+         **/
+        responsiveImages : false,
+
+        /**
+         Match media destop
+         @property matchMediaDestop
+         @type {string}
+         **/
+        matchMediaDestop : '(min-width: 1200px)',
+
+        /**
+         Match media tablet
+         @property matchMediaTablet
+         @type {string}
+         **/
+        matchMediaTablet : '(min-width: 768px)',
 
   	};
     self.priv= {};
     for (var i in options) { self.options[i] = options[i]; }
     for (var i in  self.options) { self.priv[i] = self.options[i]; }
-
-
 
 
   /** PUBLIC METHODS **/
@@ -138,42 +153,55 @@
    @return {null}
  **/
  that.init = function() {
-
      self.priv ={
-       $carrouselSlides : $('.'+self.options['carrouselSlides']),
-       currentIndex : 0,
-       openedSlide:[],
-       $nextButton : $('.'+self.options['nextButtonCssClass']),
-       $prevButton : $('.'+self.options['prevButtonCssClass']),
-       $slideNav : $('.'+self.options['slideNavCssClass']),
-       $carrouselSlidesImg : $('.'+self.options['carrouselSlidesImg']),
-       $wrapper : $('.'+ self.options['wrapper']),
-       $wrapperSecond : $('.teaser-content')
+         $carrouselSlides : $('.'+self.priv['carrouselSlides']),
+         currentIndex : 0,
+         openedSlide:[],
+         $nextButton : $('.'+self.priv['nextButtonCssClass']),
+         $prevButton : $('.'+self.priv['prevButtonCssClass']),
+         $carrouselSlidesImg : $('.'+self.priv['carrouselSlidesImg']),
+         $wrapper : $('.'+ self.priv['wrapper']),
+         $wrapperSecond : $('.teaser-content'),
+         $slideNavTipWrap : $('.'+self.priv.slideNavTipWrap),
+         mqd : window.matchMedia(self.priv.matchMediaDestop),
+         mqt : window.matchMedia(self.priv.matchMediaTablet)
      };
 
      self.priv.currentIndex = 0;
      self.priv.openedSlide = [];
+     self.priv.$slideNav = [];
 
      self.priv.slidesLength = self.priv.$carrouselSlides.length;
-     self.priv.$wrapper.css('width', self.priv.slidesLength * 100 + '%');
 
+     __handleMatchMediaDesktop(self.priv.mqd);
+     __handleMatchMediaTablet(self.priv.mqt);
+
+     //Controls
+     if(!self.priv['showBasicControls']) {
+        self.priv.$wrapper.addClass('hide-control')
+     }
+
+     for(var i =0; i < self.priv.slidesLength; i++){
+       var li = $('<li/>')
+          .addClass(self.options.slideNavCssClass)
+          .appendTo(self.priv.$slideNavTipWrap);
+     }
+     self.priv.$slideNav = $('.'+self.options.slideNavCssClass);
+
+
+     //Init wrappers css
+     self.priv.$wrapper.css('width', self.priv.slidesLength * 100 + '%');
      $(self.priv.$carrouselSlides).each(function(){
        $(this).css('left', ($(this).index() * ( 100 / self.priv.slidesLength )) + '%' );
      });
 
-
+      //Controle loading of images
      if (self.priv['preload'] === 'all') {
-       for( var i =0; i < self.priv.slidesLength ; i++){
-         __setStyles(self.priv.$carrouselSlides.eq(i).index());
-       }
+       for( var i =0; i < self.priv.slidesLength ; i++){  __setStyles(self.priv.$carrouselSlides.eq(i).index());}
      }
      else {
        __setStyles();
-       __load(self.priv.currentIndex + );
-     }
-
-     if(!self.priv['showBasicControls']) {
-        self.priv.$wrapper.addClass('hide-control')
+       __load(self.priv.currentIndex + 1);
      }
 
     //  if(this.options['autoPlay']) {
@@ -184,6 +212,7 @@
         self.priv['callBackInitFunction'].call(this);
     }
      __addingListeners();
+
    };
 
    /**
@@ -199,7 +228,6 @@
 
 
    /** PRIVATE METHODS **/
-
 
    /**
      Adding the listeners
@@ -270,7 +298,7 @@
       else if(self.priv.currentIndex >= self.priv.$carrouselSlides.length-1){
         self.priv.$nextButton.removeClass('show-button');
       }
-    };
+    }
 
     /**
       Go to
@@ -280,19 +308,19 @@
       @return {null}
     **/
     function __goTo () {
-      __load(self.priv.currentIndex + 1);
-      self.priv.$slideNav.css('transform', 'scale(0.93)');
-      setTimeout(function(){
+        __load(self.priv.currentIndex + 1);
+        self.priv.$slideNav.css('transform', 'scale(0.93)');
+        setTimeout(function(){
 
-        self.priv.$wrapper.css('transform', 'translate3d('+(-self.priv.currentIndex * 25) +'%, 0, 0px)');
-        self.priv.$wrapperSecond.css('transform', 'scale(1)');
-        __setStyles();
+          self.priv.$wrapper.css('transform', 'translate3d('+(-self.priv.currentIndex * 25) +'%, 0, 0px)');
+          self.priv.$wrapperSecond.css('transform', 'scale(1)');
+          __setStyles();
 
-        if(self.priv['callBackSlideFunction'] != null) {
-            self.priv['callBackSlideFunction'].call(this);
-        }
-      }.bind(this), 200);
-    };
+          if(self.priv['callBackSlideFunction'] != null) {
+              self.priv['callBackSlideFunction'].call(this);
+          }
+        }.bind(this), 200);
+    }
 
     /**
      open or close carrousel
@@ -307,7 +335,7 @@
        } else {
          self.priv.$slideNav.addClass('full-screen');
        }
-    };
+    }
 
     /**
       Load
@@ -317,20 +345,58 @@
       @return {null}
     **/
      function __load(slides) {
-       var i = typeof slides !== 'undefined'? slides : self.priv.currentIndex;
+         var i = typeof slides !== 'undefined'? slides : self.priv.currentIndex;
 
-       var img = self.priv.$carrouselSlidesImg.eq(i).data('src');
-       self.priv.$carrouselSlidesImg.eq(i).css('background-image', 'url(' +img+ ')');
-       self.priv.openedSlide.push(i);
+         var img = self.priv.$carrouselSlidesImg.eq(i).data('src');
+         if(self.priv.responsiveImages){
+           img = img + '-'+ self.priv.imgSize;
+         }
 
-   };
+         self.priv.$carrouselSlidesImg.eq(i).css('background-image', 'url(' +img+ ')');
+         self.priv.openedSlide.push(i);
+     }
+
+     function __getRespImageSuffix(){
+        if(self.priv.desktop)
+          self.priv.imgSize = "full";
+        else if(self.priv.tablet)
+          self.priv.imgSize = "medium";
+        else{
+          if(window.devicePixelRatio > 1)
+            self.priv.imgSize = "medium";
+          else
+            self.priv.imgSize = "small";
+        }
+     }
+
+   function __handleMatchMediaDesktop(mql){
+     if(mql.matches)
+        self.priv.desktop = true;
+    else
+        self.priv.desktop = false;
+
+    if(self.priv.responsiveImages){
+        getRespImageSuffix();
+    }
+   }
+
+   function __handleMatchMediaTablet(mql){
+     if(mql.matches)
+            self.priv.tablet = true;
+     else
+            self.priv.tablet = false;
+
+      if(self.priv.responsiveImages){
+          __getRespImageSuffix();
+      }
+   }
 
    return that;
 };
 
 
 $(document).ready(function() {
-  main =  new Carrousel({ callBackExitFunction : function(){console.log('tested');}});
+  main =  new Carrousel({ callBackInitFunction : function(){console.log('tested');}});
   main.init();
 });
 })(window, document);
