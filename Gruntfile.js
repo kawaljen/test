@@ -10,8 +10,8 @@ module.exports = function(grunt) {
 		aws: ( grunt.file.exists(homedir('.grunt-aws.json')) ? JSON.parse(base64.decode(grunt.file.read(homedir('.grunt-aws.json')))) : ''),
 
 		dirs: {
-			dev		: './',
-			prod	: './',
+			dev		: '',
+			prod	: '',
 			pack  : 'project/pack/',
 			temp	: '.temp/',
 		},
@@ -131,21 +131,19 @@ module.exports = function(grunt) {
 
  //grunt deploy:test
 	grunt.task.registerTask('deploy',
-							'Task to push latest changes in the repository and deploy in amazon s3 server',
-							function(args){
-								if (arguments.length === 0) {
-									grunt.log.writeln("no message provided.");
-								} else {
-                  //grunt.task.run('production');
-									grunt.task.run('gitpull');
-									grunt.config.set('gitcommit.options.message', args);
-                  grunt.log.writeln('<%= dirs.prod %>');
-									grunt.task.run('gitcommit');
-									grunt.task.run('gitpush');
-									// grunt.task.run('s3:production_sync');
-                  grunt.log.writeln('<%= dirs.prod %>');
-								}
-							}
+				'Task to push latest changes in the repository and deploy in amazon s3 server',
+				function(args){
+					if (arguments.length === 0) {
+						grunt.log.writeln("no message provided.");
+					} else {
+            //grunt.task.run('production');
+						grunt.task.run('gitpull');
+						grunt.config.set('gitcommit.options.message', args);
+						grunt.task.run('gitcommit');
+						grunt.task.run('gitpush');
+					  grunt.task.run('s3:production_sync');
+					}
+				}
 	);
 
 	grunt.task.registerTask('pull',['gitpull']);

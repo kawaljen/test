@@ -26,9 +26,7 @@
 .image--wide:first-child{
   display:inline-block;
 }
-.teaser__image-wide__container.always--visible{
-  width:400%;
-}
+
 .wrapper{
   padding:20px;
 }
