@@ -9,7 +9,7 @@ require = function a(b, c, d) {
                 throw j.code = "MODULE_NOT_FOUND", j
             }
             var k = c[g] = {
-                exports: {}
+                exports: {}  
             };
             b[g][0].call(k.exports, function(a) {
                 var c = b[g][1][a];
