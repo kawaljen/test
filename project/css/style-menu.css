@@ -170,3 +170,15 @@ body {
 .ss-velocity .submenu{
   left:-100%;
 }
+
+/*----------------*/
+/* Sticky menu */
+/*--------------*/
+.noheight{
+  height:auto;
+}
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}

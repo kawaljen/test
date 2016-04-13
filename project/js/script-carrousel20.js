@@ -25,7 +25,6 @@
   			/**
   				It is the parent div where the video will be created. <br/>
   				String or DOM Object are accepted.
-
   				@property wrapper
   				@type {String or DOM Object}
   			**/
@@ -44,6 +43,7 @@
           @type {String}
         **/
         carrouselSlidesImg : 'teaser__image-block',
+
         /**
          next button css class
          @property nextButtonCssClass
@@ -78,42 +78,49 @@
   				@type {Boolean}
   			**/
   			showBasicControls: true,
+
   			/**
   				Default value to indicate if the carrousel is autoplay
   				@property autoPlay
   				@type {Boolean}
   			**/
   			//autoPlay: false,
+
   			/**
   				Default value to indicate if the carrousel has to preload. The values are: auto, all.
   				@property preload
   				@type {Boolean}
   			**/
   			preload: 'auto',
+
         /**
   				Call this function when the carrousel is initiated
   				@property callBackInitFunction
   				@type {Function}
   			**/
   			callBackInitFunction: null,
+
   			/**
   				Call this function when the carrousel is playing
   				@property callBackPlayFunction
   				@type {Function}
   			**/
   			callBackSlideFunction: null,
+
   			/**
   				Call back when seeked event is fired
   				@property callBackSeekedFunction
   				@type {Function}
   			**/
   			callBackSeekedFunction: null,
+
         /**
          carrousel images max size
          @property imgSize
          @type {String}
          **/
         imgSize : '',
+
         /**
          Get optimised Images
          @property responsiveImages
@@ -134,9 +141,13 @@
          @type {string}
          **/
         matchMediaTablet : '(min-width: 768px)',
-
   	};
-    self.priv= {};
+
+    self.priv= {
+        currentIndex : 0,
+        openedSlide : [],
+        $slideNav : []
+    };
     for (var i in options) { self.options[i] = options[i]; }
     for (var i in  self.options) { self.priv[i] = self.options[i]; }
 
@@ -145,7 +156,6 @@
 
  /**
    Initializing Carrousel Class
-
    @private
    @method __init
    @param {String or DOM Object} el
@@ -167,9 +177,6 @@
          mqt : window.matchMedia(self.priv.matchMediaTablet)
      };
 
-     self.priv.currentIndex = 0;
-     self.priv.openedSlide = [];
-     self.priv.$slideNav = [];
      self.priv.slidesLength = self.priv.$carrouselSlides.length;
 
      __handleMatchMediaDesktop(self.priv.mqd);
@@ -216,7 +223,6 @@
 
    /**
      Exit Carrousel
-
      @method exit
      @return {null}
    **/
@@ -225,18 +231,15 @@
      self.priv.openedSlide = [];
    };
 
-
    /** PRIVATE METHODS **/
 
    /**
      Adding the listeners
-
      @private
      @method __addingListeners
      @return {Null}
    **/
    function __addingListeners () {
-
      self.priv.$wrapper.click(__openCarrousel);
 
      self.priv.$prevButton.click(function(){
@@ -248,6 +251,7 @@
        self.priv.currentIndex++;
        __goTo();
      });
+
      self.priv.$slideNav.click(function(){
        self.priv.currentIndex = $(this).index();
        __goTo();
@@ -256,12 +260,10 @@
            self.priv['callBackSeekedFunction'].call(this);
        }
      });
-   };
-
+   }
 
    /**
       updatePositionMarker
-
      @method  __updatePositionMarker
      @param {array} slides
      @param {String} imgSize
@@ -278,10 +280,8 @@
       __updatePositionMarker();
     };
 
-
     /**
       resetButtons
-
       @method  __resetButtons
       @param {array} slides
       @param {String} imgSize
@@ -301,7 +301,6 @@
 
     /**
       Go to
-
       @private
       @method __goTo
       @return {null}
@@ -323,7 +322,6 @@
 
     /**
      open or close carrousel
-
      @private
      @method __onAbort
      @return {null}
@@ -339,8 +337,7 @@
     /**
       Load
       @method  __load
-      @param {array} slides
-      @param {String} imgSize
+      @param {Number} slides
       @return {null}
     **/
      function __load(slides) {
@@ -351,10 +348,15 @@
            img = img + '-'+ self.priv.imgSize;
          }
 
-         self.priv.$carrouselSlidesImg.eq(i).css('background-image', 'url(' +img+ ')');
+         self.priv.$carrouselSlidesImg.eq(i).css('background-image', 'url(' + img + ')');
          self.priv.openedSlide.push(i);
      }
 
+     /**
+       getRespImageSuffix
+       @method  __getRespImageSuffix
+       @return {null}
+     **/
      function __getRespImageSuffix(){
         if(self.priv.desktop)
           self.priv.imgSize = "full";
@@ -368,6 +370,12 @@
         }
      }
 
+     /**
+       handleMatchMediaDesktop
+       @method  __handleMatchMediaDesktop
+       @param {Object} mql
+       @return {null}
+     **/
    function __handleMatchMediaDesktop(mql){
      if(mql.matches)
         self.priv.desktop = true;
@@ -379,6 +387,12 @@
     }
    }
 
+   /**
+     handleMatchMediaTablet
+     @method  __handleMatchMediaTablet
+     @param {Object} mql
+     @return {null}
+   **/
    function __handleMatchMediaTablet(mql){
      if(mql.matches)
             self.priv.tablet = true;
