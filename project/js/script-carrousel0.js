@@ -262,7 +262,7 @@
        self.priv.currentIndex++;
        __goTo();
        if(self.priv.currentIndex == self.priv.$container.find('.wrapper').length - (self.priv.limitFlickr - 3 ) ){
-         var htmlString = "";
+       var htmlString = "";
          for (var i = 0;  i < self.priv.limitFlickr; i ++ ){
 
            // Now start cycling through our array of Flickr photo details
