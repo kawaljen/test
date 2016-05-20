@@ -1,0 +1,20 @@
+{
+  "name": "test",
+  "description": "test template for grunt",
+  "version": "1.1.5",
+  "homepage": "https://github.com/kawaljen/test.git",
+  "author": {
+    "name": "Alex"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kawaljen/test.git"
+  },
+  "devDependencies": {
+    "base-64": "^0.1.0",
+    "grunt-cloudfront": "git://github.com/sspinc/grunt-cloudfront",
+    "grunt-git": "^0.2.10",
+    "grunt-s3": "^0.2.0-alpha.3",
+    "userhome": "^0.1.0"
+  }
+}
